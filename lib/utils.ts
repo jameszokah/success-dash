@@ -13,3 +13,12 @@ export function formatTime(seconds: number): string {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
+
+
+export const formatDuration = (duration: string) => {
+    // Convert duration to minutes:seconds format if needed
+    if (duration.includes(":")) return duration;
+    const minutes = Math.floor(Number(duration) / 60);
+    const seconds = Number(duration) % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };

@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileUploader } from "@/components/shared/file-uploader"
 import { db } from "@/lib/firebase"
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection } from "firebase/firestore"
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, FieldValue } from "firebase/firestore"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 
@@ -25,7 +25,7 @@ interface Devotional {
   content: string
   author: string
   imageURL?: string
-  publishedAt: any
+  publishedAt: FieldValue
   status: string
 }
 
@@ -106,6 +106,7 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
 
       // Validate required fields
       if (!title || !verse || !content || !author) {
+        toast.error("Please fill in all required fields")
         throw new Error("Please fill in all required fields")
       }
 
@@ -118,6 +119,8 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
         imageURL: imageURL || "",
         status,
         updatedAt: serverTimestamp(),
+        publishedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
       }
 
       // Add publishedAt date if status is published
@@ -147,7 +150,6 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
         })
 
         toast.success("Devotional updated", {
-          title: "Devotional updated",
           description: `Successfully updated "${title}"`,
         })
       } else {
@@ -171,8 +173,7 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
           timestamp: serverTimestamp(),
         })
 
-        toast({
-          title: "Devotional created",
+        toast.success("Devotional created", {
           description: `Successfully created "${title}"`,
         })
       }
@@ -180,10 +181,8 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
       router.push("/devotionals")
     } catch (error) {
       console.error("Error saving devotional:", error)
-      toast({
-        title: "Error",
+      toast.error("Failed to save devotional", {
         description: error instanceof Error ? error.message : "Something went wrong. Please try again.",
-        variant: "destructive",
       })
     } finally {
       setIsSubmitting(false)
@@ -362,5 +361,5 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
         </Button>
       </div>
     </form>
-  )
+  );
 }

@@ -1,26 +1,36 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { usePathname, useRouter } from "next/navigation"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { BarChart3, Users, Headphones, BookOpen, Video, Settings, Menu, LogOut, Home } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { Separator } from "@/components/ui/separator"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useAuth } from "@/contexts/auth-context"
-import { Skeleton } from "@/components/ui/skeleton"
-import Image from "next/image"
-import { deleteToken } from "../actions"
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  BarChart3,
+  Users,
+  Headphones,
+  BookOpen,
+  Video,
+  Settings,
+  Menu,
+  LogOut,
+  Home,
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/contexts/auth-context";
+import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
+import { deleteToken } from "../actions";
 
 interface NavItem {
-  title: string
-  href: string
-  icon: React.ReactNode
+  title: string;
+  href: string;
+  icon: React.ReactNode;
 }
 
 const navItems: NavItem[] = [
@@ -59,32 +69,32 @@ const navItems: NavItem[] = [
     href: "/settings",
     icon: <Settings className="mr-2 h-4 w-4" />,
   },
-]
+];
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const pathname = usePathname()
-  const isDesktop = useMediaQuery("(min-width: 1024px)")
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
-  const { user, userRole, loading, logOut } = useAuth()
-  const router = useRouter()
+  const pathname = usePathname();
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user, loading, logOut } = useAuth();
+  const router = useRouter();
 
   // Redirect if not authenticated
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/login")
+      router.push("/login");
     }
-  }, [user, loading, router])
+  }, [user, loading, router]);
 
   // Close sidebar when route changes on mobile
   useEffect(() => {
     if (!isDesktop) {
-      setIsSidebarOpen(false)
+      setIsSidebarOpen(false);
     }
-  }, [pathname, isDesktop])
+  }, [pathname, isDesktop]);
 
   // Show loading state while checking authentication
   if (loading) {
@@ -96,12 +106,12 @@ export default function DashboardLayout({
           <Skeleton className="h-4 w-3/4" />
         </div>
       </div>
-    )
+    );
   }
 
   // If not authenticated, don't render the layout
   if (!user) {
-    return null
+    return null;
   }
 
   const Sidebar = () => (
@@ -117,7 +127,7 @@ export default function DashboardLayout({
               className="h-14 w-14 text-primary-foreground"
             />
           </div>
-          <h1 className="text-xl font-bold">SuccessLife</h1>
+          <h1 className="text-xl font-bold">Success Life</h1>
         </Link>
       </div>
       <Separator />
@@ -162,8 +172,8 @@ export default function DashboardLayout({
           className="w-full justify-start"
           size="sm"
           onClick={() => {
-            deleteToken()
-            logOut()
+            deleteToken();
+            logOut();
           }}
         >
           <LogOut className="mr-2 h-4 w-4" />
@@ -181,7 +191,8 @@ export default function DashboardLayout({
           <div className="flex flex-col">
             <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-6">
               <h1 className="text-xl font-semibold">
-                {navItems.find((item) => item.href === pathname)?.title || "Dashboard"}
+                {navItems.find((item) => item.href === pathname)?.title ||
+                  "Dashboard"}
               </h1>
             </header>
             <main className="flex-1 p-6">{children}</main>
@@ -203,17 +214,23 @@ export default function DashboardLayout({
                 </SheetContent>
               </Sheet>
               <h1 className="text-xl font-semibold">
-                {navItems.find((item) => item.href === pathname)?.title || "Dashboard"}
+                {navItems.find((item) => item.href === pathname)?.title ||
+                  "Dashboard"}
               </h1>
             </div>
             <Avatar>
-              <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || "Admin"} />
-              <AvatarFallback>{user?.displayName?.charAt(0) || "A"}</AvatarFallback>
+              <AvatarImage
+                src={user?.photoURL || undefined}
+                alt={user?.displayName || "Admin"}
+              />
+              <AvatarFallback>
+                {user?.displayName?.charAt(0) || "A"}
+              </AvatarFallback>
             </Avatar>
           </header>
           <main className="flex-1 p-6">{children}</main>
         </div>
       )}
     </div>
-  )
+  );
 }

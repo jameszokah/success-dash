@@ -22,7 +22,7 @@ export default function UnauthorizedPage() {
             <ShieldAlert className="h-6 w-6 text-destructive" />
           </div>
           <CardTitle className="text-2xl">Access Denied</CardTitle>
-          <CardDescription>You don't have permission to access this area</CardDescription>
+          <CardDescription>You don&apos;t have permission to access this area</CardDescription>
         </CardHeader>
         <CardContent className="text-center">
           <p>
