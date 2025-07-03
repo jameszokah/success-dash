@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app"
-import { connectAuthEmulator, getAuth } from "firebase/auth"
-import { connectFirestoreEmulator, getFirestore, initializeFirestore } from "firebase/firestore"
+import { getAuth } from "firebase/auth"
+import {  initializeFirestore } from "firebase/firestore"
 import { getStorage } from "firebase/storage"
 
 // Your Firebase configuration
@@ -13,6 +13,8 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
+
+
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()

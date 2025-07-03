@@ -58,6 +58,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Podcast } from "@/types";
+import Image from "next/image";
 
 export function PodcastsTable() {
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
@@ -256,13 +257,15 @@ export function PodcastsTable() {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="relative h-12 w-12 rounded-md overflow-hidden bg-muted">
-                        <img
+                        <Image
                           src={
                             podcast.imageURL ||
                             "/placeholder.svg?height=48&width=48"
                           }
                           alt={podcast.title}
                           className="h-full w-full object-cover"
+                          width={1000}
+                          height={1000}
                         />
                       </div>
                       <div className="flex flex-col">

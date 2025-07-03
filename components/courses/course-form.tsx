@@ -104,6 +104,7 @@ export function CourseForm({ courseId, mode }: CourseFormProps) {
     if (mode === "edit" && courseId) {
       loadCourse();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId, mode]);
 
   const loadCourse = async () => {

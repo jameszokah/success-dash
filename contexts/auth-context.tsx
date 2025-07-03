@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
 
       return
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error signing in:", error)
       throw error
     }

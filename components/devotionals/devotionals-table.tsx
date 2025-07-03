@@ -16,7 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { MoreHorizontal, Search } from "lucide-react"
-import { collection, getDocs, query, orderBy, deleteDoc, doc } from "firebase/firestore"
+import { collection, getDocs, query, orderBy, deleteDoc, doc, Timestamp } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import {
   AlertDialog,
@@ -46,6 +46,8 @@ export function DevotionalsTable() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [selectedDevotional, setSelectedDevotional] = useState<string | null>(null)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+  console.log(devotionals)
 
   // Fetch devotionals from Firebase
   useEffect(() => {
@@ -187,7 +189,7 @@ export function DevotionalsTable() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {devotional.publishedAt ? new Date(devotional.publishedAt).toLocaleDateString() : "—"}
+                    {devotional.publishedAt ? new Date((devotional.publishedAt as unknown as Timestamp | string) instanceof Timestamp ? (devotional.publishedAt as unknown as Timestamp).toDate() : devotional.publishedAt).toLocaleDateString() : "—"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>

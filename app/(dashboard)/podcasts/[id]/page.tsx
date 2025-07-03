@@ -14,7 +14,7 @@ export default function EditPodcastPage() {
   const podcastId = params.id as string
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [exists, setExists] = useState(true)
+  const [, setExists] = useState(true)
 
   useEffect(() => {
     async function checkPodcast() {

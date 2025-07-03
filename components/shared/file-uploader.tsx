@@ -9,6 +9,7 @@ import { Upload, X } from "lucide-react"
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage"
 import { storage } from "@/lib/firebase"
 import { v4 as uuidv4 } from "uuid"
+import Image from "next/image"
 
 interface FileUploaderProps {
   accept: string
@@ -41,7 +42,7 @@ export function FileUploader({ accept, value, onUpload, maxSize, folder = "uploa
       // Create a unique file name
       const fileExtension = file.name.split(".").pop()
       const fileName = `${uuidv4()}.${fileExtension}`
-      const storageRef = ref(storage, `${folder}/${fileName}`)
+      const storageRef = ref(storage, `success-life/${folder}/${fileName}`)
 
       // Upload file with progress tracking
       const uploadTask = uploadBytesResumable(storageRef, file)
@@ -92,8 +93,8 @@ export function FileUploader({ accept, value, onUpload, maxSize, folder = "uploa
     <div className="space-y-2">
       {!value && !isUploading ? (
         <>
-          <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full">
-            <Upload className="mr-2 h-4 w-4" />
+          <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full h-32 flex items-center justify-center">
+            <Upload className="mr-2 h-8 w-8" />
             Upload {accept.includes("image") ? "Image" : "Audio"}
           </Button>
           <input type="file" accept={accept} ref={fileInputRef} onChange={handleFileChange} className="hidden" />
@@ -108,7 +109,7 @@ export function FileUploader({ accept, value, onUpload, maxSize, folder = "uploa
         <div className="flex items-center justify-between rounded-md border p-2">
           <div className="flex items-center gap-2">
             {accept.includes("image") ? (
-              <img src={value || "/placeholder.svg"} alt="Uploaded" className="h-10 w-10 rounded object-cover" />
+              <Image src={value || "/placeholder.svg"} alt="Uploaded" width={40} height={40} className="rounded object-cover" />
             ) : (
               <div className="flex h-10 w-10 items-center justify-center rounded bg-primary/10">
                 <Upload className="h-5 w-5 text-primary" />

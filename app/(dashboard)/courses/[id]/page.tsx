@@ -34,6 +34,7 @@ import Link from "next/link";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { toast } from "sonner";
+import Image from "next/image";
 
 interface Lesson {
   id: string;
@@ -229,10 +230,12 @@ export default function CourseDetailPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-                <img
+                <Image
                   src={course.imageURL || "/placeholder.svg"}
                   alt={course.title}
                   className="w-full h-full object-cover"
+                  width={1000}
+                  height={1000}
                 />
               </div>
 

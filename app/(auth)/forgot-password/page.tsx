@@ -1,53 +1,62 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { useAuth } from "@/contexts/auth-context"
-import { toast } from "sonner"
-import Image from "next/image"
-
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useAuth } from "@/contexts/auth-context";
+import { toast } from "sonner";
+import Image from "next/image";
+import { FirebaseError } from "firebase/app";
 
 export default function ForgotPasswordPage() {
-  const { resetPassword } = useAuth()
-  const [isLoading, setIsLoading] = useState(false)
-  const [email, setEmail] = useState("")
-  const [isSubmitted, setIsSubmitted] = useState(false)
-  const [error, setError] = useState("")
+  const { resetPassword } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
 
     try {
-      await resetPassword(email)
-      setIsSubmitted(true)
+      await resetPassword(email);
+      setIsSubmitted(true);
       toast.success("Reset link sent", {
         description: "Check your email for instructions to reset your password",
-      })
-    } catch (error: any) {
-      let errorMessage = "Failed to send reset email"
-
-      if (error.code === "auth/invalid-email") {
-        errorMessage = "Invalid email address"
-      } else if (error.code === "auth/user-not-found") {
-        errorMessage = "No account found with this email"
+      });
+    } catch (error: unknown) {
+      let errorMessage = "Failed to send reset email";
+      if (error instanceof FirebaseError) {
+        if (error.code === "auth/invalid-email") {
+          errorMessage = "Invalid email address";
+        }
+        if (error.code === "auth/user-not-found") {
+          errorMessage = "No account found with this email";
+        }
       }
 
-      setError(errorMessage)
+      setError(errorMessage);
       toast.error("Request failed", {
         description: errorMessage,
       });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Card className="w-full">

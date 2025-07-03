@@ -3,8 +3,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { formatDistanceToNow } from "date-fns"
+import { Timestamp } from "firebase/firestore"
 
-interface ActivityItem {
+export interface ActivityItem {
   id: string
   user: {
     name: string
@@ -22,6 +23,7 @@ interface RecentActivityProps {
 }
 
 export function RecentActivity({ data }: RecentActivityProps) {
+  console.log(data)
   if (!data || data.length === 0) {
     return <div className="text-center py-4 text-muted-foreground">No recent activity</div>
   }
@@ -51,7 +53,7 @@ export function RecentActivity({ data }: RecentActivityProps) {
             </div>
             <p className="text-sm text-muted-foreground">{activity.contentTitle}</p>
             <p className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
+              {formatDistanceToNow(new Date((activity.timestamp as unknown as Timestamp).toDate()), { addSuffix: true })}
             </p>
           </div>
         </div>

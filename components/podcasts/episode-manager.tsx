@@ -68,6 +68,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import Image from "next/image";
 
 interface EpisodeManagerProps {
   podcastId: string;
@@ -387,10 +388,12 @@ export function EpisodeManager({
                 />
                 {formData.artwork && (
                   <div className="flex justify-center mt-2">
-                    <img
+                    <Image
                       src={formData.artwork || "/placeholder.svg"}
                       alt="Episode artwork"
                       className="h-32 w-32 rounded-lg object-cover"
+                      width={500}
+                      height={500}
                     />
                   </div>
                 )}
@@ -460,13 +463,15 @@ export function EpisodeManager({
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4 flex-1">
                     <div className="relative h-16 w-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
-                      <img
+                      <Image
                         src={
                           episode.artwork ||
                           "/placeholder.svg?height=64&width=64"
                         }
                         alt={episode.title}
                         className="h-full w-full object-cover"
+                        width={1000}
+                        height={1000}
                       />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/20">
                         <Play className="h-6 w-6 text-white" />

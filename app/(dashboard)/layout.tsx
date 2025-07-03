@@ -8,12 +8,12 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  BarChart3,
+  // BarChart3,
   Users,
   Headphones,
   BookOpen,
   Video,
-  Settings,
+  // Settings,
   Menu,
   LogOut,
   Home,
@@ -39,11 +39,11 @@ const navItems: NavItem[] = [
     href: "/dashboard",
     icon: <Home className="mr-2 h-4 w-4" />,
   },
-  {
-    title: "Analytics",
-    href: "/analytics",
-    icon: <BarChart3 className="mr-2 h-4 w-4" />,
-  },
+  // {
+  //   title: "Analytics",
+  //   href: "/analytics",
+  //   icon: <BarChart3 className="mr-2 h-4 w-4" />,
+  // },
   {
     title: "Users",
     href: "/users",
@@ -64,11 +64,11 @@ const navItems: NavItem[] = [
     href: "/courses",
     icon: <Video className="mr-2 h-4 w-4" />,
   },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: <Settings className="mr-2 h-4 w-4" />,
-  },
+  // {
+  //   title: "Settings",
+  //   href: "/settings",
+  //   icon: <Settings className="mr-2 h-4 w-4" />,
+  // },
 ];
 
 export default function DashboardLayout({
@@ -115,7 +115,7 @@ export default function DashboardLayout({
   }
 
   const Sidebar = () => (
-    <div className="flex h-full flex-col border-r bg-background">
+    <div className="flex h-full flex-col border-r bg-background min-h-screen overflow-y-auto">
       <div className="p-6">
         <Link href="/dashboard" className="flex items-center gap-2">
           <div className="rounded-full p-2">

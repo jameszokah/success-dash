@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Headphones, BookOpen, Video } from "lucide-react"
 
-interface ContentItem {
+export interface ContentItem {
   id: string
   title: string
   type: string

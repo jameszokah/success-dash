@@ -1,70 +1,89 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Overview } from "@/components/dashboard/overview"
-import { RecentActivity } from "@/components/dashboard/recent-activity"
-import { StatsCards } from "@/components/dashboard/stats-cards"
-import { TopContent } from "@/components/dashboard/top-content"
-import { db } from "@/lib/firebase"
-import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Overview } from "@/components/dashboard/overview";
+import {
+  ActivityItem,
+  RecentActivity,
+} from "@/components/dashboard/recent-activity";
+import { StatsCards } from "@/components/dashboard/stats-cards";
+import { ContentItem, TopContent } from "@/components/dashboard/top-content";
+import { db } from "@/lib/firebase";
+import { collection, getDocs, query, orderBy, limit } from "firebase/firestore";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     users: 0,
     podcasts: 0,
     devotionals: 0,
     courses: 0,
-  })
-  const [recentActivity, setRecentActivity] = useState([])
-  const [topContent, setTopContent] = useState([])
+  });
+  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
+  const [topContent, setTopContent] = useState<ContentItem[]>([]);
 
   useEffect(() => {
     async function fetchDashboardData() {
       try {
-        setLoading(true)
+        setLoading(true);
 
         // Fetch collection counts
-        const usersSnapshot = await getDocs(collection(db, "users"))
-        const podcastsSnapshot = await getDocs(collection(db, "podcasts"))
-        const devotionalsSnapshot = await getDocs(collection(db, "devotionals"))
-        const coursesSnapshot = await getDocs(collection(db, "courses"))
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const podcastsSnapshot = await getDocs(collection(db, "podcasts"));
+        const devotionalsSnapshot = await getDocs(
+          collection(db, "devotionals")
+        );
+        const coursesSnapshot = await getDocs(collection(db, "courses"));
 
         setStats({
           users: usersSnapshot.size,
           podcasts: podcastsSnapshot.size,
           devotionals: devotionalsSnapshot.size,
           courses: coursesSnapshot.size,
-        })
+        });
 
         // Fetch recent activity
-        const activityQuery = query(collection(db, "activity"), orderBy("timestamp", "desc"), limit(5))
-        const activitySnapshot = await getDocs(activityQuery)
+        const activityQuery = query(
+          collection(db, "activity"),
+          orderBy("timestamp", "desc"),
+          limit(5)
+        );
+        const activitySnapshot = await getDocs(activityQuery);
         const activityData = activitySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }))
-        setRecentActivity(activityData)
+        })) as ActivityItem[];
+        setRecentActivity(activityData);
 
         // Fetch top content
-        const contentQuery = query(collection(db, "contentStats"), orderBy("views", "desc"), limit(5))
-        const contentSnapshot = await getDocs(contentQuery)
+        const contentQuery = query(
+          collection(db, "contentStats"),
+          orderBy("views", "desc"),
+          limit(5)
+        );
+        const contentSnapshot = await getDocs(contentQuery);
         const contentData = contentSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }))
-        setTopContent(contentData)
+        })) as ContentItem[];
+        setTopContent(contentData);
       } catch (error) {
-        console.error("Error fetching dashboard data:", error)
+        console.error("Error fetching dashboard data:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchDashboardData()
-  }, [])
+    fetchDashboardData();
+  }, []);
 
   if (loading) {
     return (
@@ -115,7 +134,7 @@ export default function DashboardPage() {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -126,7 +145,9 @@ export default function DashboardPage() {
         <Card className="lg:col-span-4">
           <CardHeader>
             <CardTitle>Overview</CardTitle>
-            <CardDescription>App usage and engagement over the last 30 days</CardDescription>
+            <CardDescription>
+              App usage and engagement over the last 30 days
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Overview />
@@ -154,5 +175,5 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

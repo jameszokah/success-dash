@@ -1,86 +1,103 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Skeleton } from "@/components/ui/skeleton"
-import { db } from "@/lib/firebase"
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore"
-import { formatDate, timestampToDate } from "@/lib/firebase-utils"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { db } from "@/lib/firebase";
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  Timestamp,
+} from "firebase/firestore";
+import { formatDate, timestampToDate } from "@/lib/firebase-utils";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface User {
-  id: string
-  name: string
-  email: string
-  photoURL?: string
-  role: string
-  status: string
-  createdAt: any
-  bio?: string
-  phone?: string
+  id: string;
+  name: string;
+  email: string;
+  photoURL?: string;
+  role: string;
+  status: string;
+  createdAt: Timestamp;
+  bio?: string;
+  phone?: string;
 }
 
 interface UserActivity {
-  id: string
-  type: string
-  title: string
-  timestamp: any
+  id: string;
+  type: string;
+  title: string;
+  timestamp: Timestamp;
 }
 
 export default function UserDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const userId = params.id as string
-  const [user, setUser] = useState<User | null>(null)
-  const [userActivity, setUserActivity] = useState<UserActivity[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const params = useParams();
+  const router = useRouter();
+  const userId = params.id as string;
+  const [user, setUser] = useState<User | null>(null);
+  const [userActivity, setUserActivity] = useState<UserActivity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchUserData() {
       try {
-        setLoading(true)
+        setLoading(true);
 
         // Fetch user data
-        const userDoc = await getDoc(doc(db, "users", userId))
+        const userDoc = await getDoc(doc(db, "users", userId));
 
         if (!userDoc.exists()) {
-          setError("User not found")
-          return
+          setError("User not found");
+          return;
         }
 
         const userData = {
           id: userDoc.id,
           ...userDoc.data(),
-        } as User
+        } as User;
 
-        setUser(userData)
+        setUser(userData);
 
         // Fetch user activity
-        const activityQuery = query(collection(db, "userActivity"), where("userId", "==", userId))
+        const activityQuery = query(
+          collection(db, "userActivity"),
+          where("userId", "==", userId)
+        );
 
-        const activitySnapshot = await getDocs(activityQuery)
+        const activitySnapshot = await getDocs(activityQuery);
         const activityData = activitySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        })) as UserActivity[]
+        })) as UserActivity[];
 
-        setUserActivity(activityData)
+        setUserActivity(activityData);
       } catch (error) {
-        console.error("Error fetching user data:", error)
-        setError("Failed to load user data")
+        console.error("Error fetching user data:", error);
+        setError("Failed to load user data");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchUserData()
-  }, [userId])
+    fetchUserData();
+  }, [userId]);
 
   if (loading) {
     return (
@@ -121,7 +138,7 @@ export default function UserDetailPage() {
           </Card>
         </div>
       </div>
-    )
+    );
   }
 
   if (error || !user) {
@@ -129,7 +146,9 @@ export default function UserDetailPage() {
       <div className="flex flex-col gap-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">User Not Found</h2>
-          <p className="text-muted-foreground">The user you are looking for does not exist.</p>
+          <p className="text-muted-foreground">
+            The user you are looking for does not exist.
+          </p>
         </div>
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -138,7 +157,7 @@ export default function UserDetailPage() {
         </Alert>
         <Button onClick={() => router.push("/users")}>Back to Users</Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -146,7 +165,9 @@ export default function UserDetailPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">User Details</h2>
-          <p className="text-muted-foreground">View and manage user information</p>
+          <p className="text-muted-foreground">
+            View and manage user information
+          </p>
         </div>
         <Button variant="outline" onClick={() => router.push("/users")}>
           Back to Users
@@ -161,7 +182,10 @@ export default function UserDetailPage() {
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-4">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={user.photoURL || "/placeholder.svg"} alt={user.name} />
+              <AvatarImage
+                src={user.photoURL || "/placeholder.svg"}
+                alt={user.name}
+              />
               <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="text-center">
@@ -172,7 +196,9 @@ export default function UserDetailPage() {
             <div className="flex flex-wrap gap-2 justify-center">
               <div
                 className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                  user.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                  user.status === "active"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
                 }`}
               >
                 {user.status}
@@ -194,7 +220,9 @@ export default function UserDetailPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground">Joined</p>
-                  <p className="font-medium">{formatDate(timestampToDate(user.createdAt))}</p>
+                  <p className="font-medium">
+                    {formatDate(timestampToDate(user.createdAt))}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Phone</p>
@@ -208,7 +236,8 @@ export default function UserDetailPage() {
                   <ul className="mt-2 space-y-2">
                     {userActivity.map((activity) => (
                       <li key={activity.id} className="text-sm">
-                        <span className="font-medium">{activity.type}:</span> {activity.title} -{" "}
+                        <span className="font-medium">{activity.type}:</span>{" "}
+                        {activity.title} -{" "}
                         {formatDate(timestampToDate(activity.timestamp))}
                       </li>
                     ))}
@@ -269,5 +298,5 @@ export default function UserDetailPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
