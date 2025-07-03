@@ -1,4 +1,3 @@
-"use client"
 
 import { DevotionalForm } from "@/components/devotionals/devotional-form"
 
