@@ -275,7 +275,7 @@ export function PodcastsTable() {
                         >
                           {podcast.title}
                         </Link>
-                        <p className="text-sm text-muted-foreground line-clamp-1">
+                        <p className="text-sm text-muted-foreground w-48 line-clamp-1">
                           {podcast.description}
                         </p>
                       </div>
