@@ -239,9 +239,8 @@ export function QuoteForm({ quoteId }: QuoteFormProps) {
   return (
     <form onSubmit={handleSubmit}>
       <Tabs defaultValue="content" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="content">Content</TabsTrigger>
-          <TabsTrigger value="media">Media</TabsTrigger>
           <TabsTrigger value="publish">Publishing</TabsTrigger>
         </TabsList>
 

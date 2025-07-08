@@ -56,7 +56,7 @@ export function PostsTable() {
       try {
         setLoading(true)
         const postsRef = collection(db, "posts")
-        const q = query(postsRef, orderBy("title"))
+        const q = query(postsRef, orderBy("title"), orderBy("createdAt", "desc"))
         const querySnapshot = await getDocs(q)
 
         const postsData = querySnapshot.docs.map((doc) => ({
@@ -145,7 +145,7 @@ export function PostsTable() {
                 <Checkbox />
               </TableHead>
               <TableHead>Title</TableHead>
-                <TableHead>Content</TableHead>
+              <TableHead>Content</TableHead>
               <TableHead>Author</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Published</TableHead>
@@ -172,11 +172,16 @@ export function PostsTable() {
                     <Checkbox />
                   </TableCell>
                   <TableCell className="font-medium">
-                    <Link href={`/posts/${post.id}`} className="hover:underline">
+                    <Link
+                      href={`/posts/${post.id}`}
+                      className="hover:underline"
+                    >
                       {post.title}
                     </Link>
                   </TableCell>
-                  <TableCell>{post.content}</TableCell>
+                  <TableCell className="text-muted-foreground w-48 line-clamp-1">
+                    {post.content}
+                  </TableCell>
                   <TableCell>
                     <div
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
@@ -189,7 +194,17 @@ export function PostsTable() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    {post.publishedAt ? new Date((post.publishedAt as unknown as Timestamp | string) instanceof Timestamp ? (post.publishedAt as unknown as Timestamp).toDate() : post.publishedAt).toLocaleDateString() : "—"}
+                    {post.publishedAt
+                      ? new Date(
+                          (post.publishedAt as unknown as
+                            | Timestamp
+                            | string) instanceof Timestamp
+                            ? (
+                                post.publishedAt as unknown as Timestamp
+                              ).toDate()
+                            : post.publishedAt
+                        ).toLocaleDateString()
+                      : "—"}
                   </TableCell>
                   <TableCell>
                     <DropdownMenu>
@@ -209,8 +224,8 @@ export function PostsTable() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => {
-                            setSelectedPost(post.id)  
-                            setIsDeleteDialogOpen(true)
+                            setSelectedPost(post.id);
+                            setIsDeleteDialogOpen(true);
                           }}
                           className="text-destructive focus:text-destructive"
                         >
@@ -226,22 +241,29 @@ export function PostsTable() {
         </Table>
       </div>
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the post and all associated data.
+              This action cannot be undone. This will permanently delete the
+              post and all associated data.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeletePost} className="bg-destructive text-destructive-foreground">
+            <AlertDialogAction
+              onClick={handleDeletePost}
+              className="bg-destructive text-destructive-foreground"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

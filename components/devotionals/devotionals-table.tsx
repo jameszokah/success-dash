@@ -55,7 +55,7 @@ export function DevotionalsTable() {
       try {
         setLoading(true)
         const devotionalsRef = collection(db, "devotionals")
-        const q = query(devotionalsRef, orderBy("title"))
+        const q = query(devotionalsRef, orderBy("title"), orderBy("createdAt", "desc"))
         const querySnapshot = await getDocs(q)
 
         const devotionalsData = querySnapshot.docs.map((doc) => ({

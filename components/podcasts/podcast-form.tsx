@@ -30,6 +30,7 @@ import {
 } from "firebase/firestore";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Podcast } from "@/types";
+import { getHours, parse } from "date-fns";
 
 interface PodcastFormProps {
   podcastId?: string;
@@ -108,6 +109,18 @@ export function PodcastForm({ podcastId }: PodcastFormProps) {
     }));
   };
 
+  function extractHours(time: string): number {
+    if (/h|m/.test(time)) {
+      // Match formats like 1h:32m, 1h32min, 1h, etc.
+      const match = time.match(/(?:(\d+)h)?(?::)?(?:(\d+)(?:m|min))?/);
+      return match?.[1] ? parseInt(match[1]) : 0;
+    } else {
+      const date = parse(time, "HH:mm", new Date());
+      return getHours(date);
+    }
+  }
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -141,6 +154,7 @@ export function PodcastForm({ podcastId }: PodcastFormProps) {
         audioURL: audioURL || "",
         category,
         date: date || new Date().toISOString(),
+        totalHours: duration && duration !== "" ? extractHours(duration) : 0,
         status: status || "draft",
         featured: featured || false,
         trending: trending || false,
@@ -162,7 +176,7 @@ export function PodcastForm({ podcastId }: PodcastFormProps) {
           ...podcastData,
           createdAt: serverTimestamp(),
           episodes: 0,
-          totalHours: 0,
+          totalHours: podcastData.duration && podcastData.duration !== "" ? extractHours(podcastData.duration) : 0,
           views: 0,
         });
 

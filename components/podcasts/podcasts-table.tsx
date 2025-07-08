@@ -29,12 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import {
-  MoreHorizontal,
-  Search,
-  Clock,
-  Headphones,
-} from "lucide-react";
+import { MoreHorizontal, Search, Clock, Headphones } from "lucide-react";
 import {
   collection,
   getDocs,
@@ -94,16 +89,17 @@ export function PodcastsTable() {
             podcastData.episodes = episodeCount.data().count;
 
             // Calculate total duration from episodes
-            const episodesSnapshot = await getDocs(episodesQuery);
-            let totalDuration = 0;
-            episodesSnapshot.docs.forEach((episodeDoc) => {
-              const episode = episodeDoc.data();
-              totalDuration += episode.duration || 0;
-            });
+            // const episodesSnapshot = await getDocs(episodesQuery);
+            // let totalDuration = 0;
+            // episodesSnapshot.docs.forEach((episodeDoc) => {
+            //   const episode = episodeDoc.data();
+            //   totalDuration += episode.duration || 0;
+            // });
 
             // Convert seconds to hours
-            podcastData.totalHours =
-              Math.round((totalDuration / 3600) * 10) / 10;
+            // podcastData.totalHours =
+            //   Math.round((totalDuration / 3600) * 10) / 10;
+
 
             return podcastData;
           })
@@ -173,9 +169,12 @@ export function PodcastsTable() {
   });
 
   const formatDuration = (hours: number) => {
+    console.log(hours, "hours");
     if (hours < 1) return `${Math.round(hours * 60)}m`;
     return `${hours}h`;
   };
+
+  console.log(podcasts, "podcasts");
 
   return (
     <div className="space-y-4">
@@ -296,7 +295,7 @@ export function PodcastsTable() {
                   <TableCell>
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span>{formatDuration(podcast.totalHours || 0)}</span>
+                      <span>{formatDuration(podcast?.totalHours as number)}</span>
                     </div>
                   </TableCell>
                   <TableCell>

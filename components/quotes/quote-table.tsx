@@ -54,7 +54,7 @@ export function QuotesTable() {
       try {
         setLoading(true)
         const quotesRef = collection(db, "quotes")
-        const q = query(quotesRef, orderBy("quote"))
+        const q = query(quotesRef, orderBy("quote"), orderBy("createdAt", "desc"))
         const querySnapshot = await getDocs(q)
 
         const quotesData = querySnapshot.docs.map((doc) => ({
@@ -168,7 +168,7 @@ export function QuotesTable() {
                   <TableCell>
                     <Checkbox />
                   </TableCell>
-                  <TableCell className="font-medium">
+                  <TableCell className="font-medium line-clamp-1 w-48">
                     <Link href={`/quotes/${quote.id}`} className="hover:underline">
                       {quote.quote}
                     </Link>
