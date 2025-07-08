@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -15,9 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileUploader } from "@/components/shared/file-uploader";
+import { Card, CardContent } from "@/components/ui/card";
 import { db } from "@/lib/firebase";
 import {
   doc,
@@ -32,77 +30,66 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/auth-context";
 
-import Image from "next/image";
- 
-
-interface Devotional {
+interface Quote {
   id: string;
-  title: string;
-  verse: string;
-  verseContent?: string;
-  content: string;
+  quote: string;
   author: string;
   date: string;
-  imageURL?: string;
   publishedAt: FieldValue;
   status: string;
 }
 
-interface DevotionalFormProps {
-  devotionalId?: string;
+interface QuoteFormProps {
+  quoteId?: string;
 }
 
-export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
+export function QuoteForm({ quoteId }: QuoteFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [loading, setLoading] = useState(!!devotionalId);
+  const [loading, setLoading] = useState(!!quoteId);
   const { user } = useAuth();
 
-  const [formData, setFormData] = useState<Partial<Devotional>>({
-    title: "",
-    verse: "",
-    verseContent: "",
-    content: "",
+  const [formData, setFormData] = useState<Partial<Quote>>({
+    quote: "",
     author: "",
     date: new Date().toISOString(),
-    imageURL: "",
     status: "draft",
   });
 
   // Fetch devotional data if editing
   useEffect(() => {
-    async function fetchDevotional() {
-      if (!devotionalId) return;
+    async function fetchQuote() {
+      if (!quoteId) return;
 
       try {
         setLoading(true);
-        const devotionalDoc = await getDoc(
-          doc(db, "devotionals", devotionalId)
+        const quoteDoc = await getDoc(
+          doc(db, "quotes", quoteId)
         );
 
-        if (devotionalDoc.exists()) {
+        if (quoteDoc.exists()) {
           setFormData({
-            id: devotionalDoc.id,
-            ...devotionalDoc.data(),
-          } as Devotional);
+            id: quoteDoc.id,
+            ...quoteDoc.data(),
+          } as Quote);
         } else {
-          toast.error("Devotional not found", {
-            description: "Devotional not found",
+          toast.error("Quote not found", {
+            description: "Quote not found",
           });
-          router.push("/devotionals");
+          router.push("/quotes");
         }
       } catch (error) {
-        console.error("Error fetching devotional:", error);
-        toast.error("Failed to load devotional data", {
-          description: "Failed to load devotional data",
+        console.error("Error fetching quote:", error);
+        toast.error("Failed to load quote data", {
+          description: "Failed to load quote data",
         });
       } finally {
         setLoading(false);
       }
     }
 
-    fetchDevotional();
-  }, [devotionalId, router, toast]);
+    fetchQuote();
+  }, [quoteId, router, toast]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -115,12 +102,7 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileUpload = (url: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      imageURL: url,
-    }));
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,29 +110,21 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
 
     try {
       const {
-        title,
-        verse,
-        verseContent,
-        content,
+        quote,
         author,
-        imageURL,
         status,
         date,
       } = formData;
 
       // Validate required fields
-      if (!title || !verse || !content || !author) {
+      if (!quote || !author) {
         toast.error("Please fill in all required fields");
         throw new Error("Please fill in all required fields");
       }
 
-      const devotionalData = {
-        title,
-        verse,
-        verseContent: verseContent || "",
-        content,
+      const quoteData = {
+        quote,
         author,
-        imageURL: imageURL || "",
         status,
         updatedAt: new Date().toISOString(),
         publishedAt: new Date().toISOString(),
@@ -160,63 +134,63 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
 
       // Add publishedAt date if status is published
       if (status === "published") {
-        if (devotionalId && formData.status !== "published") {
+        if (quoteId && formData.status !== "published") {
           // Only set publishedAt if it's a new publication
-          devotionalData.publishedAt = new Date().toISOString();
-        } else if (!devotionalId) {
-          devotionalData.publishedAt = new Date().toISOString();
+          quoteData.publishedAt = new Date().toISOString();
+        } else if (!quoteId) {
+          quoteData.publishedAt = new Date().toISOString();
         }
       }
 
-      if (devotionalId) {
-        // Update existing devotional
-        await updateDoc(doc(db, "devotionals", devotionalId), devotionalData);
+      if (quoteId) {
+        // Update existing quote
+        await updateDoc(doc(db, "quotes", quoteId), quoteData);
 
         // Add to activity log
-        await setDoc(doc(db, "activity", `devotional_update_${Date.now()}`), {
+          await setDoc(doc(db, "activity", `quote_update_${Date.now()}`), {
           user: {
             name: user?.displayName || "", // Replace with actual user name
             email: user?.email || "", // Replace with actual user email
           },
           action: "updated",
-          contentType: "devotional",
-          contentTitle: title,
+          contentType: "quote",
+          contentTitle: quote,
           timestamp: serverTimestamp(),
         });
 
-        toast.success("Devotional updated", {
-          description: `Successfully updated "${title}"`,
+        toast.success("Quote updated", {
+          description: `Successfully updated "${quote}"`,
         });
       } else {
-        // Create new devotional
-        const newDevotionalRef = doc(collection(db, "devotionals"));
+        // Create new quote
+        const newQuoteRef = doc(collection(db, "quotes"));
 
-        // Add createdAt for new devotionals
-        devotionalData.createdAt = new Date().toISOString();
+        // Add createdAt for new quotes
+        quoteData.createdAt = new Date().toISOString();
 
-        await setDoc(newDevotionalRef, devotionalData);
+        await setDoc(newQuoteRef, quoteData);
 
         // Add to activity log
-        await setDoc(doc(db, "activity", `devotional_add_${Date.now()}`), {
+        await setDoc(doc(db, "activity", `quote_add_${Date.now()}`), {
           user: {
             name: user?.displayName || "",
             email: user?.email || "",
           },
           action: "added",
-              contentType: "devotional",
-          contentTitle: title,
+          contentType: "quote",
+          contentTitle: quote,
           timestamp: serverTimestamp(),
         });
 
-        toast.success("Devotional created", {
-          description: `Successfully created "${title}"`,
+        toast.success("Quote created", {
+          description: `Successfully created "${quote}"`,
         });
       }
 
-      router.push("/devotionals");
+      router.push("/quotes");
     } catch (error) {
-      console.error("Error saving devotional:", error);
-      toast.error("Failed to save devotional", {
+      console.error("Error saving quote:", error);
+      toast.error("Failed to save quote", {
         description:
           error instanceof Error
             ? error.message
@@ -274,13 +248,13 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
         <TabsContent value="content" className="space-y-4 pt-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="quote">Quote</Label>
               <Input
-                id="title"
-                name="title"
-                value={formData.title}
+                id="quote"
+                name="quote"
+                value={formData.quote}
                 onChange={handleChange}
-                placeholder="Enter devotional title"
+                placeholder="Enter quote"
                 required
               />
             </div>
@@ -298,76 +272,9 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="verse">Bible Verse</Label>
-            <Input
-              id="verse"
-              name="verse"
-              value={formData.verse}
-              onChange={handleChange}
-              placeholder="e.g., John 3:16"
-              required
-            />
-          </div>
+        
 
-          <div className="space-y-2">
-            <Label htmlFor="verseContent">Verse Content</Label>
-            <Textarea
-              id="verseContent"
-              name="verseContent"
-              value={formData.verseContent}
-              onChange={handleChange}
-              placeholder="Enter the verse content"
-              rows={3}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="content">Devotional Content</Label>
-            <Textarea
-              id="content"
-              name="content"
-              value={formData.content}
-              onChange={handleChange}
-              placeholder="Enter devotional content"
-              rows={10}
-              required
-            />
-          </div>
-
-          
-        </TabsContent>
-
-        <TabsContent value="media" className="space-y-4 pt-4">
-          <Card>
-            <CardContent className="p-6">
-              <div className="space-y-2">
-                <Label>Featured Image</Label>
-               
-                  <>
-                    <FileUploader
-                      accept="image/*"
-                      value={formData.imageURL}
-                      onUpload={handleFileUpload}
-                      maxSize={5} // 5MB
-                      folder="devotionals/images"
-                    />
-                    {formData.imageURL && (
-                      <div className="mt-4 flex justify-center">
-                        <Image
-                          src={formData.imageURL || "/placeholder.svg"}
-                          alt="Devotional image"
-                          width={300}
-                          height={300}
-                          className="h-48 w-auto rounded-md object-cover"
-                        />
-                      </div>
-                    )}
-                  </>
-                
-              </div>
-            </CardContent>
-          </Card>
+           
         </TabsContent>
 
         <TabsContent value="publish" className="space-y-4 pt-4">
@@ -389,8 +296,8 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
                 </Select>
                 <p className="text-sm text-muted-foreground">
                   {formData.status === "published"
-                    ? "This devotional will be visible to all users."
-                    : "This devotional will be saved as a draft and won't be visible to users."}
+                    ? "This quote will be visible to all users."
+                    : "This quote will be saved as a draft and won't be visible to users."}
                 </p>
               </div>
             </CardContent>
@@ -402,7 +309,7 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => router.push("/devotionals")}
+          onClick={() => router.push("/quotes")}
           disabled={isSubmitting}
         >
           Cancel
@@ -410,9 +317,9 @@ export function DevotionalForm({ devotionalId }: DevotionalFormProps) {
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting
             ? "Saving..."
-            : devotionalId
-            ? "Update Devotional"
-            : "Create Devotional"}
+            : quoteId
+            ? "Update Quote"
+            : "Create Quote"}
         </Button>
       </div>
     </form>

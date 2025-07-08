@@ -50,14 +50,24 @@ const navItems: NavItem[] = [
     icon: <Users className="mr-2 h-4 w-4" />,
   },
   {
-    title: "Podcasts",
-    href: "/podcasts",
-    icon: <Headphones className="mr-2 h-4 w-4" />,
-  },
-  {
     title: "Devotionals",
     href: "/devotionals",
     icon: <BookOpen className="mr-2 h-4 w-4" />,
+  },
+  {
+    title: "Posts",
+    href: "/posts",
+    icon: <BookOpen className="mr-2 h-4 w-4" />,
+  },
+  {
+    title: "Quotes",
+    href: "/quotes",
+    icon: <BookOpen className="mr-2 h-4 w-4" />,
+  },
+  {
+    title: "Podcasts",
+    href: "/podcasts",
+    icon: <Headphones className="mr-2 h-4 w-4" />,
   },
   {
     title: "Courses",
