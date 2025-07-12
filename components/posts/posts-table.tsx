@@ -183,6 +183,9 @@ export function PostsTable() {
                     {post.content}
                   </TableCell>
                   <TableCell>
+                    {post.author}
+                  </TableCell>
+                  <TableCell>
                     <div
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                         post.status === "published"

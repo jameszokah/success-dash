@@ -141,8 +141,7 @@ export function QuotesTable() {
               <TableHead className="w-[40px]">
                 <Checkbox />
               </TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Verse</TableHead>
+              <TableHead>Quote</TableHead>
               <TableHead>Author</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Published</TableHead>

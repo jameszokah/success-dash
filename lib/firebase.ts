@@ -14,6 +14,16 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
+// const firebaseConfig = {
+//   apiKey: "AIzaSyANH29_zjr83rdJLv4wdHDprRvENjE0HpY",
+//   authDomain: "ghbay-a6024.firebaseapp.com",
+//   projectId: "ghbay-a6024",
+//   storageBucket: "ghbay-a6024.appspot.com",
+//   messagingSenderId: "1060751239275",
+//   appId: "1:1060751239275:web:0ba3d53016089522a1292e",
+//   measurementId: "G-XE7B2Y9RDS"
+// };
+
 
 // Initialize Firebase
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()
