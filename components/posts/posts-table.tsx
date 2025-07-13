@@ -56,7 +56,7 @@ export function PostsTable() {
       try {
         setLoading(true)
         const postsRef = collection(db, "posts")
-        const q = query(postsRef, orderBy("title"), orderBy("createdAt", "desc"))
+        const q = query(postsRef,  orderBy("createdAt", "desc"))
         const querySnapshot = await getDocs(q)
 
         const postsData = querySnapshot.docs.map((doc) => ({
